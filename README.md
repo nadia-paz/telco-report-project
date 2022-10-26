@@ -69,18 +69,16 @@ My initial hypothesis is that main churning factors are are connected with the m
 |*paperless_billing*|  Does customer use paperless billing | 'Yes', 'No'
 |*contract_type*|  What type of contract has the customer | 'One year', <br>'Month-to-month', <br>'Two year'
 |*payment_type*|  How does the customer pay for the service | 'Mailed check', <br>'Electronic check', <br>'Credit card (automatic)', <br>'Bank transfer (automatic)'
-|
-|
 |**Numerical Data**
 |*monthly_charges*|  Monthly payment of the customer | Amount in USD
 |*total_charges*|  Total amount paid to the company during all the period | Amount in USD
 |*tenure*| How long did the customer stay with the company | Number of months
-|
+||<img width=150/>|<img width=550/>|
 |**Other Data**
 |*customer_id*| Unique customer's id number|
-|
+||<img width=150/>|<img width=550/>|
 |**Target Data**
-|
+||<img width=150/>|<img width=550/>|
 |**churn** | **Did the customer churn?** | **'Yes', 'No'**
 
  
