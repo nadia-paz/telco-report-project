@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 
 from env import get_db_url
 
+#service_features holds the names of columns with additional services
 service_features = ['streaming_tv',\
                 'device_protection',\
                 'online_backup',\
@@ -74,7 +75,7 @@ def prep_telco(df):
     # Convert total charges to float datatype
     df['total_charges'] = df.total_charges.astype(float)
 
-    #optimize the memory usage with type converting
+    #optimize the memory usage with type converting to category type
 
     #convert objects to categories
     df = to_category(df)
@@ -88,11 +89,14 @@ def prep_telco(df):
 def dummies_telco(df):
     '''
     creates dummies and
-    drops not numerical columns (except 'churn') 
+    drops not numerical columns 
     '''
     
-    # Convert binary categorical variables to numeric
+    # Convert categorical variables to numeric
     
+    #replace 'Yes'/'No' with 1 and 0
+    #Month-to-month with 0, One year with 1, Two year with 2
+    #None(internet service) with 0, DSL with 1 and Fiber optic with 2
     df['paperless_billing'] = df.paperless_billing.map({'Yes': 1, 'No': 0}).astype('uint8')
     df['churn'] = df.churn.map({'Yes': 1, 'No': 0}).astype('uint8')
     df['contract_type'] = df.contract_type.map({'Month-to-month':0, 'One year':1, 'Two year':2}).astype('uint8')
@@ -110,7 +114,7 @@ def dummies_telco(df):
     # Concatenate dummy dataframe with the original 
     df = pd.concat([df, dummy_df], axis=1)
 
-    #drop unneeded columns
+    #drop columns with low significance and columns where dummies where created aut
     df.drop(columns = ['gender', 'senior_citizen', \
                      'phone_service', 'total_charges', 'payment_type'],
                    inplace = True)
@@ -122,6 +126,7 @@ def dummies_telco(df):
 
 def full_split(df, target):
     '''
+    accepts a data frame and the name of the target variable as a parameter
     splits the data frame into:
     X_train, X_validate, X_test, y_train, y_validate, y_test
     '''
@@ -161,9 +166,13 @@ def train_validate_test_split(df, target, seed=2912):
 ######### HELPERS ##########
 def get_cat_variables(df):
     '''
-    this function returns categorical variables from the data frame
+    this functions accepts a data frame as a parameter
+    returns a list with categorical columns of the data frame
     '''
+    #create a list
     cat_vars = []
+
+    #find all object categories, exclude customer_id
     for col in df.columns:
         if (df[col].dtype == 'O' or df[col].dtype == 'category') and col != 'customer_id':
             cat_vars.append(col)
@@ -171,24 +180,31 @@ def get_cat_variables(df):
 
 def to_category(df):
     '''
-    this function transforms categorical columns
-    that are represented as objects into category data type
-    
-    returns a transformed data frame
+    this function transforms data type=object
+    into data type = category
+    returns a data frame with the new data type
     '''
     cat = get_cat_variables(df)
     for col in cat:
         df[col] = df[col].astype('category')
     return df
 
-def transform_services(df, sf):
-    for col in sf:
+def transform_services(df):
+    '''
+    this functions accepts a data frame as a parameter
+    goes through the additional services and replaces 
+    values 'No phone service', 'No internet service' with 'No'
+    '''
+    for col in service_features:
         df[col] = df[col].replace([ 'No phone service', 'No internet service'], 'No')
-    return df
+    
 
 def add_services_number(df):
     '''
-    this functions counts the number of additional features per customer and creates a new column with these features
+    this functions accepts a data frame as a parameter
+    counts the number of additional services per customer and 
+    creates a new column with the number the total number of 
+    additional service
     '''
     for col in service_features:
         df[col] = df[col].map({'Yes': 1, 'No': 0}).astype('uint8')
