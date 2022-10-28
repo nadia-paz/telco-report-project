@@ -85,7 +85,7 @@ def prep_telco(df):
     return df
 
 
-def dummies_telco(dataframe):
+def dummies_telco(df):
     '''
     creates dummies and
     drops not numerical columns (except 'churn') 
@@ -93,30 +93,29 @@ def dummies_telco(dataframe):
     
     # Convert binary categorical variables to numeric
     
-    dataframe['paperless_billing'] = dataframe.paperless_billing.map({'Yes': 1, 'No': 0}).astype('uint8')
-    dataframe['churn'] = dataframe.churn.map({'Yes': 1, 'No': 0}).astype('uint8')
-    
+    df['paperless_billing'] = df.paperless_billing.map({'Yes': 1, 'No': 0}).astype('uint8')
+    df['churn'] = df.churn.map({'Yes': 1, 'No': 0}).astype('uint8')
+    df['contract_type'] = df.contract_type.map({'Month-to-month':0, 'One year':1, 'Two year':2}).astype('uint8')
+    df['internet_service_type'] = df.internet_service_type.map({'None':0, 'DSL':1, 'Fiber optic':2}).astype('uint8')
+    df['dependents'] = df.dependents.map({'Yes': 1, 'No': 0}).astype('uint8')
+    df['partner'] = df.partner.map({'Yes': 1, 'No': 0}).astype('uint8')
 
-    for col in service_features:
-        dataframe[col] = dataframe[col].map({'Yes': 1, 'No': 0}).astype('uint8')
-        print(col)
+   # for col in service_features:
+        #dataframe[col] = dataframe[col].map({'Yes': 1, 'No': 0}).astype('uint8')
+        #print(col)
     
     # Get dummies for non-binary categorical variables
-    dummy_df = pd.get_dummies(dataframe[['contract_type', \
-                              'internet_service_type', \
-                              'payment_type']], dummy_na=False, \
-                              drop_first=True)
+    dummy_df = pd.get_dummies(df[['payment_type']], dummy_na=False, drop_first=True)
     
-    # Concatenate dummy dataframe to original 
-    dataframe1 = pd.concat([dataframe, dummy_df], axis=1)
+    # Concatenate dummy dataframe with the original 
+    df = pd.concat([df, dummy_df], axis=1)
 
     #drop unneeded columns
-    dataframe1.drop(columns = ['gender', 'senior_citizen', 'partner', 'dependents',\
-                     'gender', 'partner', 'dependents', 'phone_service', \
-                    'total_charges', 'contract_type', 'internet_service_type', 'payment_type'],
+    df.drop(columns = ['gender', 'senior_citizen', \
+                     'phone_service', 'total_charges', 'payment_type'],
                    inplace = True)
     
-    return dataframe1
+    return df
 
 ### SPLIT FUNCTION ###
 
@@ -182,3 +181,15 @@ def to_category(df):
         df[col] = df[col].astype('category')
     return df
 
+def transform_services(df, sf):
+    for col in sf:
+        df[col] = df[col].replace([ 'No phone service', 'No internet service'], 'No')
+    return df
+
+def add_services_number(df):
+    '''
+    this functions counts the number of additional features per customer and creates a new column with these features
+    '''
+    for col in service_features:
+        df[col] = df[col].map({'Yes': 1, 'No': 0}).astype('uint8')
+    df['add_services'] = df[service_features].sum(axis=1)
