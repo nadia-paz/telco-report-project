@@ -97,6 +97,7 @@ def dummies_telco(df):
     #replace 'Yes'/'No' with 1 and 0
     #Month-to-month with 0, One year with 1, Two year with 2
     #None(internet service) with 0, DSL with 1 and Fiber optic with 2
+
     df['paperless_billing'] = df.paperless_billing.map({'Yes': 1, 'No': 0}).astype('uint8')
     df['churn'] = df.churn.map({'Yes': 1, 'No': 0}).astype('uint8')
     df['contract_type'] = df.contract_type.map({'Month-to-month':0, 'One year':1, 'Two year':2}).astype('uint8')
@@ -206,6 +207,12 @@ def add_services_number(df):
     creates a new column with the number the total number of 
     additional service
     '''
+
+    # in the columns of additional services
+    # replace 'No internet/phone service' value with 'No'
+    transform_services(df)
+    
+    #replace Yes and No with 1 and 0
     for col in service_features:
         df[col] = df[col].map({'Yes': 1, 'No': 0}).astype('uint8')
     df['add_services'] = df[service_features].sum(axis=1)
