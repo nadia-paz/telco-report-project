@@ -18,6 +18,13 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, plot_confusion_matrix, ConfusionMatrixDisplay
 
+import wrangle as wr
+
+seed = 2912
+models_to_pick = 2
+number_of_features = 13
+
+
 f1 =['streaming_tv',
  'device_protection',
  'online_backup',
@@ -59,27 +66,21 @@ f14 = ['tenure', 'contract_type', 'dependents', 'partner', 'monthly_charges']
 f15 = ['tenure', 'internet_service_type', 'monthly_charges', 'dependents', 'partner']
 
 f16 = ['tenure',
- #'dependents', 
- #'partner',
- #'multiple_lines',
  'online_security',
- #'online_backup',
  'device_protection',
  'tech_support',
- #'streaming_tv',
- #'streaming_movies',
  'paperless_billing',
  'monthly_charges',
  'contract_type',
  'internet_service_type',
  'payment_type_Credit card (automatic)',
  'payment_type_Electronic check',
- 'payment_type_Mailed check'] #everything
+ 'payment_type_Mailed check'] 
 
 def get_features(train):
     return train.columns.tolist()
 
-number_of_features = 13
+
 
 features_dict= {
               1:f1, 
@@ -147,104 +148,118 @@ scores_lr = {
 def gen_decision_trees(X_train, X_validate, y_train, y_validate):
     for key in range(1,number_of_features):
         for i in range(1, 4):
-            model = DecisionTreeClassifier(max_depth = i, random_state=2912)
+            model = DecisionTreeClassifier(max_depth = i, random_state=seed)
             model.fit(X_train[features_dict[key]], y_train)
-            #predictions = model.predict(X_train[features_dict[key]])
+            
+            #calculate scores
             score = round(model.score(X_train[features_dict[key]], y_train), 3)
             validate = round(model.score(X_validate[features_dict[key]], y_validate), 3)
-            #name = 'F' + str(key) + '-DT max_depth='+str(i)
-            
-            #prediction_dictionary['model_name'].append(name)
-            #prediction_dictionary['accuracy_score'].append(score)
 
+
+            #save the information about the model and it's score to a dictionary
             scores_dt['model_name'].append('Decision Tree')
-            scores_dt['feature_name'].append(key)
+            scores_dt['feature_name'].append('f'+str(key))
             scores_dt['accuracy_score'].append(score)
             scores_dt['features'].append(features_dict[key])
             scores_dt['parameters'].append(i)
             scores_dt['validate_score'].append(validate)
 
+            # create a data frame with models_to_pick number of models
+            # that perform the best on the training set
+            # return this data frame
             best_dt = pd.DataFrame(scores_dt).\
-                    sort_values(by=['accuracy_score', 'validate_score'], ascending=[False, False]).\
-                    head(number_of_features)
-            #best_models = pd.concat(best_models, best_dt)
+                    sort_values(by='accuracy_score', ascending=False).\
+                    head(models_to_pick)
+            
     return best_dt
 
 
 def gen_random_forest(X_train, X_validate, y_train, y_validate):
     for key in range(1,number_of_features):
         for i in range(1, 6):
-            model = RandomForestClassifier(max_depth = i, random_state=2912)
+            #build the model and fit X_train, y_train into it
+            model = RandomForestClassifier(max_depth = i, random_state=seed)
             model.fit(X_train[features_dict[key]], y_train)
-            #predictions = model.predict(X_train[features_dict[key]])
+
+            #calculate scores
             score = round(model.score(X_train[features_dict[key]], y_train), 3)
-            #name = 'F' + str(key) + '-RF max_depth='+str(i)
             validate = round(model.score(X_validate[features_dict[key]], y_validate), 3)
             
-            #prediction_dictionary['model_name'].append(name)
-            #prediction_dictionary['accuracy_score'].append(score)
             
+            #save the information about the model and it's score to a dictionary
             scores_rf['model_name'].append('Random Forest')
-            scores_rf['feature_name'].append(key)
+            scores_rf['feature_name'].append('f'+str(key))
             scores_rf['accuracy_score'].append(score)
             scores_rf['features'].append(features_dict[key])
             scores_rf['parameters'].append(i)
             scores_rf['validate_score'].append(validate)
 
+            # create a data frame with models_to_pick number of models
+            # that perform the best on the training set
+            # return this data frame
             best_rf = pd.DataFrame(scores_rf).\
-                    sort_values(by=['accuracy_score', 'validate_score'], ascending=[False, False]).\
-                    head(number_of_features)
-            #best_models = pd.concat(best_models, best_rf)
+                    sort_values(by='accuracy_score', ascending=False).\
+                    head(models_to_pick)
+        
     return best_rf
 
 def gen_knn(X_train, X_validate, y_train, y_validate):
     for key in range(1,number_of_features):
         for i in range(1, 21):
+            #build the model and fit X_train, y_train into it
             model = KNeighborsClassifier(n_neighbors=i, weights='uniform')
             model.fit(X_train[features_dict[key]], y_train)
-            #predictions = model.predict(X_train[features_dict[key]])
-            score = round(model.score(X_train[features_dict[key]], y_train), 3)
-            #name = 'F' + str(key) + '-KNN n_neigh='+str(i)
-            validate = round(model.score(X_validate[features_dict[key]], y_validate), 3)
-            #prediction_dictionary['model_name'].append(name)
-            #prediction_dictionary['accuracy_score'].append(score)
             
+            #calculate scores
+            score = round(model.score(X_train[features_dict[key]], y_train), 3)            
+            validate = round(model.score(X_validate[features_dict[key]], y_validate), 3)
+
+            
+            #save the information about the model and it's score to a dictionary
             scores_knn['model_name'].append('KNN')
-            scores_knn['feature_name'].append(key)
+            scores_knn['feature_name'].append('f'+str(key))
             scores_knn['accuracy_score'].append(score)
             scores_knn['features'].append(features_dict[key])
             scores_knn['parameters'].append(i)
             scores_knn['validate_score'].append(validate)
 
+            # create a data frame with models_to_pick number of models
+            # that perform the best on the training set
+            # return this data frame
             best_knn = pd.DataFrame(scores_knn).\
-                    sort_values(by=['accuracy_score', 'validate_score'], ascending=[False, False]).\
-                    head(number_of_features)
+                    sort_values(by='accuracy_score', ascending=False).\
+                    head(models_to_pick)
     return best_knn
 
 def gen_logistic_regression(X_train, X_validate, y_train, y_validate):
     for key in features_dict:
-        model = LogisticRegression(random_state=2912)
+        #build the model and fit X_train, y_train into it
+        model = LogisticRegression(random_state=seed)
         model.fit(X_train[features_dict[key]], y_train)
 
-
-        #predictions = model.predict(X_train[features_dict[key]])
+        #calculate scores
         score = round(model.score(X_train[features_dict[key]], y_train), 3)
-        #name = 'F' + str(key) + '-LR='+str(key)
         validate = round(model.score(X_validate[features_dict[key]], y_validate), 3)
-        #prediction_dictionary['model_name'].append(name)
-        #prediction_dictionary['accuracy_score'].append(score)
         
-        
+        #save the information about the model and it's score to a dictionary
         scores_lr['model_name'].append('Logistic Regression')
-        scores_lr['feature_name'].append(key)
+        scores_lr['feature_name'].append('f'+str(key))
         scores_lr['accuracy_score'].append(score)
         scores_lr['features'].append(features_dict[key])
         scores_lr['parameters'].append(0)
         scores_lr['validate_score'].append(validate)
-    
-    return pd.DataFrame(scores_lr)
+
+        # create a data frame with models_to_pick number of models
+        # that perform the best on the training set
+        # return this data frame
+    return pd.DataFrame(scores_lr).sort_values(by='accuracy_score', ascending=False).\
+                    head(models_to_pick)
 
 def get_best_train_models(X_train, X_validate, y_train, y_validate):
+    
+    #run all models 
+    #functions return best performing models
+    #save them to 1 data fram and return this data frame
     results = gen_decision_trees(X_train, X_validate, y_train, y_validate)
     results = results.append(gen_random_forest(X_train, X_validate, y_train, y_validate))
     results = results.append(gen_knn(X_train, X_validate, y_train, y_validate))
@@ -252,21 +267,80 @@ def get_best_train_models(X_train, X_validate, y_train, y_validate):
     
     return results
 
-def parse_model(results):
-    validate_models = results.model_name
-    values = []
-    for name in validate_models:
-        key = int(name[1])
-        
-        model_name = name[3:5]
-        
-        parameter = 0
-        #do not get parameters for logistic regression
-        if model_name != 'LR':
-            parameter = int(name.split('=')[-1])
-            
-        values.append({'key': key, 'model_name':model_name, 'parameter':parameter})
-    return values
+def run_the_final_test(results, X_train, X_test, y_train, y_test):
+    '''
+    accepts a data frame with 3 best models
+    creates the 
+    '''
+    #create a data frame with 1  row - model winner
+    best_model = results.head(1)
+    #build the model
+    model = LogisticRegression()
+    #fit X-train and y_train
+    model.fit(X_train[f16], y_train)
+    #create predictions from the X_test
+    predictions = model.predict(X_test[f16])
+    #save probalities of churn from the X_test
+    probabilities = model.predict_proba(X_test[f16])[:,1]
+    #count the accuracy score on the test sample
+    score = round(model.score(X_test[f16], y_test), 3)
+    #save the score to the best_model data frame
+    best_model['test_score'] = score
+
+    return best_model, probabilities, predictions
+
+def save_to_csv(customer_ids, probabilities, predictions):
+    '''
+    accepts 3 arrays as parameters
+    creates a data frame 
+    save this data frame into *.csv file
+    '''
+    final_csv = pd.DataFrame({'customer_id':customer_ids, 
+                         'probability_of_churn':probabilities, 
+                         'predictions_of_churn':predictions})
+    final_csv.to_csv('predictions.csv', index=False)
+
+####################################
+
+def get_baseline_scocre(y_train):
+    '''
+    accepts y_train series, calculates and returns baseline score
+    '''
+    baseline_score = (y_train == int(y_train.mode())).mean()
+    return baseline_score
+
+def get_customers_ids(X_train, X_validate, X_test):
+    '''
+    accepts train, validate, test data sets
+    saves customer ids to the variable
+    drops the customer_id column from all data sets
+    returns a Series with customer ids
+    '''
+    #get the customer ids from the test data set. We'll need it for the *.csv file
+    customer_ids = X_test.customer_id
+
+    #drop customer_id from all columns
+    X_train.drop(columns = 'customer_id', inplace=True)
+    X_validate.drop(columns = 'customer_id', inplace=True)
+    X_test.drop(columns = 'customer_id', inplace=True)
+
+    return customer_ids
+
+
+
+def count_differnce(results):
+    '''
+    accepts a dataframe with the test results as a parameter
+    for every row counts the absolute value of the 
+    difference in scores of train and validate data sets
+    creates a new column that holds the obtained values
+    sorts the values by max validate_score and min score_difference
+    returns back the result data frame with new column
+    
+    '''
+    results['score_difference'] = abs(results.accuracy_score - results.validate_score)
+    return results.sort_values(by=['validate_score', 'score_difference'], ascending=[False, True]).head(3)
+
 
 ####################################
 
