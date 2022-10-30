@@ -1,15 +1,19 @@
 # telco-report-project
 Project: Find drivers for customer churn at Telco. 
-
-## Project Description
  
-Chess is widely renowned as one of the most skill intensive games ever invented. Both sides begin the game with identical pieces in an identical position, there are no random elements (aside from assigning the first move), and the movement of those pieces during a game can result in over 121 million possible combinations in just the fist three moves. Because of this, the player with the most skill is likely to win the grand majority of chess games. I have decided to look into the different elements of a chess game to determine if any of them increase or decrease the chance of a player with lower skill defeating a player with greater skill.
+
  
 ## Project Goal
  
-* Find drivers of customers churn at Telco. Answer the question: Why do customers churn at Telco?
-* Find the important features and build the model that can predict the customer churn.
-* Give the recommendations how to decrease the number of churned customers.
+* **Part I** *Find the drivers of customers churn*.
+* **Part II** *Build the machine learning model that can predict customer's churn with accuracy > 75%* 
+* *Drow conclusions and define the next steps*
+
+## Steps to Reproduce
+1) Clone this repo into your computer.
+2) Acquire the data from Codeup using your ```env.py``` file
+3) Put the data in the file containing the cloned repo.
+4) Run the ```telco_project.ipynb``` file.
 
  
 ## Initial Thoughts
@@ -18,30 +22,25 @@ My initial hypothesis is that main churning factors are are connected with the m
  
 ## The Plan
  
-* Aquire data from the database
- 
-* Prepare data
-   * steps of preparation
-       * drop the columns that are not relative to the report(payment id, internet service id, contract type id)
-       * drop duplicates if available, fix the columns that have incorrect data types, null values
-       * encode the categorical variables 
-       * split the data into 3 data sets: train, validate, test
- 
-* Explore data in search of drivers of upsets
-   * Answer the following initial questions:
-       * Do the monthly charges affect the churn?
-       * Does the contract type affect the churn?
-       * Do additional services affect the churn?
-       
-      
-      
-* Develop a Model to predict if a chess game will end in an upset
-   * Use drivers identified in explore to build predictive models of different types
-   * Evaluate models on train and validate data
-   * Select the best model based on highest accuracy
-   * Evaluate the best model on test data
- 
-* Draw conclusions
+
+#### Part I
+1. Acquire the data from the ```telco``` database. Transform the data to a Pandas data frame to make it easy to use and manipulate in the Jupyter Notebook.
+2. Prepare the data for exploration and analysis. Find out if there are some values missing and find a way to handle those missing values.
+3. Explore the data through visualizations and statistical tests. Find which features are connected with the customers' churn and which ones are not. 
+4. Make the exploration summary and leave the recommendation, where the company has to pay more attention
+
+
+#### Part II
+1. Pick the features that can help to build a good predicting model.
+2. Pick the algorithms for creating the predicting model.
+3. Encode the categorical variables 
+4. Split the data into 3 data sets: train, validate and test data (56%, 24%, and 20% respectively)
+5. Create the models and evaluate them using the accuracy score on the train data sets.
+6. Pick the models with the best accuracy score and evaluate them on the validation set.
+7. Find out which model has the best performance: relatively high predicting power on the validation test and slight difference in the train and validation prediction results.
+8. Apply the predictions to the test data set. Show the final accuracy scores. Save the predictions to the ```*.csv``` file
+
+*Drow conclusions and define the next steps*
  
 ## Data Dictionary
 
@@ -78,26 +77,40 @@ My initial hypothesis is that main churning factors are are connected with the m
 |*customer_id*| Unique customer's id number|
 ||<img width=150/>|<img width=550/>|
 |**Target Data**
-||<img width=150/>|<img width=550/>|
 |**churn** | **Did the customer churn?** | **'Yes', 'No'**
 
  
-## Steps to Reproduce
-1) Clone this repo.
-2) Acquire the data using your ```env.py``` file
-3) Put the data in the file containing the cloned repo.
-4) Run notebook.
  
-## Takeaways and Conclusions
-* 
-* 
-* 
-* 
-* 
-* 
-* 
-* 
+## Part I - Exploration
+
+## Takeaways and recommendations
+1. Having or not having a phone service doesn't affect the customer’s churn much.
+3. Fiber optic customers churn more.
+    - ***Recommendation:*** research the competitor's market and reconsider the payment for the fiber optic internet or include more additional services for free for those customers.
+4. Most of the churn happens within the first few months. My guess is that those customers are travelers that use the phone/internet services only for a short period of time.
+    - ***Recommendation:***
+        * Create special attractive 'travelers packages’ and track them as well. This will help to identify if the churn is linked to travel reasons or if the company has something that makes new customers unhappy.
+        * Offer some additional service discounts at the end of the first half-year period.
+5. Most customers that churn have month-to-month contracts.
+    - ***Recommendation:*** give more incentives for signing one-year or two-year contracts
+6. Churned customers also had higher monthly payments. Monthly payments correlate with additional services. We can not recommend cutting the services, but we can recommend making more attractive service packages.
+    - ***Recommendation:*** create more attractive service packages with better quality/price relationship
  
-## Recommendations
-* 
-* 
+## Part II - Modeling
+- Almost all features in the data set significantly affect the customer's churn. My choice was to create feature combinations and test how various algorithms perform.
+- Logistic Regression performs much better in terms of showing similar results with ```train```, ```validate``` and ```test``` data sets. It won the first two positions in my 'best model' criterion.
+- The 3rd best model was Desicion Tree with ```max_depth``` hyperparameter set to ```3```.
+- Overall, my goal was to create a model that has a prediction power > 75%, and my 'winner' successfully coped with the task.
+
+## Conclusions and the next steps
+- Most of the data presented in the ```telco``` data set affects the customer's churn. After exploring data I can name the biggest drivers of churn at the company, so the company can pay more attention to the customer that are high risk of churn. The drivers are:
+- contract type, 
+- the internet service type,
+- the payment type,
+- monthly charges. 
+
+The model that have got the highest accuracy score included all of them. 
+ 
+**Next steps** 
+The analysis provided in this project is just a first step on the way to deeper explorations and predictions. The next step in the exploration would be a multivariate analysis. Do the customers with dependents prefer Streaming Tv or Device protection? Do their preferences make them stay with the company or leave? Who are the people that sign Two-year contracts? Senior citizens, married couples?  What services do they prefer to include? What contracts do fiber optic customers sign? What payment types do they use?
+- The multivariate analysis will help to see the churn drivers better and possibly will help to build a better prediction model.
