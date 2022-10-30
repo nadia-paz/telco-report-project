@@ -79,7 +79,7 @@ def internet_service_test(df):
     p = stats.chi2_contingency(internet_observed)[1]
     if p < alpha:
         print(f'P-value is {p}')
-        print('here is enough evidence that Internet service type is associated with customers churn')
+        print('There is enough evidence that Internet service type is associated with customers churn')
     else:
         print(f'P-value is {p}')
         print('There is not enough evidence that Internet service type is associated with customer churn')
@@ -106,12 +106,13 @@ def test_monthly_charges(churned, not_churned):
     accepts 2 data subsets from telco data frame and a numerical column name as parameters
     runs the Mann Whtney-U test to check if the variances are equal in both subsets
     '''
-    #p = stats.ttest_ind(churned.monthly_charges, not_churned.monthly_charges, equal_var=False)[1]
-    p = stats.mannwhitneyu(churned.monthly_charges, not_churned.monthly_charges)[1]
-    if p < alpha:
+    t, p = stats.ttest_ind(churned.monthly_charges, not_churned.monthly_charges, equal_var=False)
+    #p = stats.mannwhitneyu(churned.monthly_charges, not_churned.monthly_charges)[1]
+    if p / 2 < alpha  and t > 0:
         print(f'P-value is {p}')
-        print('There is a significant difference in monhtly charges between customers that churned and did not \
-churn\n\n')
+        print('The average monthly charges of churned customers <= The average monthly charges of customers who haven\'t churned')
+    else:
+        print('The average monthly charges of churned customers > The average monthly charges of customers who haven\'t churned')
 
 def get_p_values(df, cat_vars):
     '''
@@ -250,7 +251,7 @@ def visualize_tenure(churned, not_churned):
 
     #subplot 1 - churned
     plt.subplot(121)
-    plt.title('Chruned customers', fontsize=16)
+    plt.title('Churned customers', fontsize=16)
     sns.histplot(data = churned, x = 'tenure', kde = True)
 
     plt.subplot(122)
@@ -285,6 +286,7 @@ def charges_services_corr(df):
     creates a scatter plot that shows a relation between
     monthly charges and number of additiona services
     '''
+    plt.figure(figsize = (12, 10))
     sns.scatterplot(data = df, x = 'monthly_charges', y='add_services', hue='churn')
     plt.show()
 
