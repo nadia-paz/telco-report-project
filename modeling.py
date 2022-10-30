@@ -25,13 +25,13 @@ models_to_pick = 2
 number_of_features = 13
 
 
-f1 =['streaming_tv',
+f1 =['senior_citizen',
  'device_protection',
  'online_backup',
  'tech_support',
- 'streaming_movies',
+ 'dependents',
  'online_security',
- 'multiple_lines']
+ 'partner']
 
 f2 = ['tenure', 'internet_service_type', 'monthly_charges']
 f3 = ['tenure', 'contract_type', 'monthly_charges']
@@ -40,10 +40,10 @@ f4 = ['contract_type', 'internet_service_type',\
 f5 = ['tenure', 'contract_type', 'payment_type_Credit card (automatic)']
 f6 = ['contract_type', 'online_security', 'tech_support', 'internet_service_type'] # 4 most powerful categorical features
 f7 = ['contract_type', 'online_security', 'tech_support', 'internet_service_type', 'tenure'] # same + tenure
-f8 = ['tenure', 'contract_type', 'monthly_charges']
+f8 = ['tenure', 'contract_type', 'monthly_charges', 'senior_citizen']
 f9 = ['tenure', 'contract_type', 'paperless_billing', 'monthly_charges']
 
-f10 = ['add_services', 'tenure', 'paperless_billing', 'payment_type_Credit card (automatic)']
+f10 = ['add_services', 'senior_citizen', 'tenure', 'paperless_billing', 'payment_type_Credit card (automatic)']
 
 f11 = ['add_services', 'tenure', 'internet_service_type']
 
@@ -61,7 +61,7 @@ f13 = ['tenure', 'add_services',
  'monthly_charges',
  'contract_type', 'dependents', 'partner']
 
-f14 = ['tenure', 'contract_type', 'dependents', 'partner', 'monthly_charges']
+f14 = ['tenure', 'contract_type', 'dependents', 'partner', 'senior_citizen', 'monthly_charges']
 
 f15 = ['tenure', 'internet_service_type', 'monthly_charges', 'dependents', 'partner']
 
