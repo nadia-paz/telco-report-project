@@ -8,9 +8,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from scipy import stats
 
+from scipy import stats
 import wrangle as wr
+
+#increase the font size
+sns.set(font_scale=1.5)
 
 #set the significance level to 0.05
 alpha = 0.05
@@ -286,7 +289,7 @@ def charges_services_corr(df):
     creates a scatter plot that shows a relation between
     monthly charges and number of additiona services
     '''
-    plt.figure(figsize = (12, 10))
+    plt.figure(figsize = (12, 8))
     sns.scatterplot(data = df, x = 'monthly_charges', y='add_services', hue='churn')
     plt.show()
 
