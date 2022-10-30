@@ -116,8 +116,8 @@ def dummies_telco(df):
     df = pd.concat([df, dummy_df], axis=1)
 
     #drop columns with low significance and columns where dummies where created aut
-    df.drop(columns = ['gender', 'senior_citizen', \
-                     'phone_service', 'total_charges', 'payment_type'],
+    df.drop(columns = ['gender', 'phone_service','multiple_lines',\
+            'streaming_tv', 'streaming_movies', 'total_charges', 'payment_type'],
                    inplace = True)
     
     return df
@@ -173,10 +173,11 @@ def get_cat_variables(df):
     #create a list
     cat_vars = []
 
-    #find all object categories, exclude customer_id
+    #find all object categories, exclude customer_id, include senior_citizen
     for col in df.columns:
         if (df[col].dtype == 'O' or df[col].dtype == 'category') and col != 'customer_id':
             cat_vars.append(col)
+        cat_vars.append('senior_citizen')
     return cat_vars
 
 def to_category(df):
