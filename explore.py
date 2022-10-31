@@ -13,7 +13,7 @@ from scipy import stats
 import wrangle as wr
 
 #increase the font size
-sns.set(font_scale=1.5)
+#sns.set(font_scale=1.5)
 
 #set the significance level to 0.05
 alpha = 0.05
@@ -112,10 +112,13 @@ def test_monthly_charges(churned, not_churned):
     t, p = stats.ttest_ind(churned.monthly_charges, not_churned.monthly_charges, equal_var=False)
     #p = stats.mannwhitneyu(churned.monthly_charges, not_churned.monthly_charges)[1]
     if p / 2 < alpha  and t > 0:
-        print(f'P-value is {p}')
-        print('The average monthly charges of churned customers <= The average monthly charges of customers who haven\'t churned')
-    else:
+        print(f'P-value is {p}, t is {t}')
+        print('Reject the null hypothesis')
         print('The average monthly charges of churned customers > The average monthly charges of customers who haven\'t churned')
+    else:
+        print(f'P-value is {p}, t is {t}')
+        print('Fail to reject the null hypothesis')
+        print('The average monthly charges of churned customers <= The average monthly charges of customers who haven\'t churned')
 
 def get_p_values(df, cat_vars):
     '''
@@ -236,12 +239,12 @@ def visualize_contract_type(churned, not_churned):
     #subplot 1 - churned
     plt.subplot(121)
     sns.histplot(data = churned, x="contract_type", hue='contract_type', stat="percent")
-    plt.title('Churned customers')
+    plt.title('Churned customers', fontsize = 16)
 
     #subplot 2 - not churned
     plt.subplot(122)
     sns.histplot(data = not_churned, x="contract_type", hue='contract_type', stat="percent")
-    plt.title('Current customers')
+    plt.title('Current customers', fontsize = 16)
     plt.show()
 
 def visualize_tenure(churned, not_churned):
