@@ -196,31 +196,18 @@ def visualize_phone_internet_services(churned, not_churned):
     '''
     plt.figure(figsize = (20, 8))
 
-    plt.suptitle('Phone and internet services', fontsize = 20)
+    plt.suptitle('Internet service types', fontsize = 20)
 
-    #using subplots to show visuals 1 row and 4 columns
-
-    #phone service
-
-    #subplot 1
-    plt.subplot(141)
-    sns.histplot(data = churned, x="phone_service", hue='phone_service', stat="percent")
-    plt.title('Phone    Churned', fontsize = 16)
-
-    #subplot 2
-    plt.subplot(142)
-    sns.histplot(data = not_churned, x="phone_service", stat="percent", hue='phone_service')
-    plt.title('Phone    Current', fontsize = 16)
-
+    #using subplots to show visuals 1 row and 2 columns
     #internet service types
 
-    #subplot 3
-    plt.subplot(143)
+    #subplot 1
+    plt.subplot(121)
     sns.histplot(data = churned, x="internet_service_type", hue='internet_service_type', stat="percent")
     plt.title('Internet    Churned', fontsize =16)
 
-    #subplot 4
-    plt.subplot(144)
+    #subplot 2
+    plt.subplot(122)
     sns.histplot(data = not_churned, x="internet_service_type", hue='internet_service_type', stat="percent")
     plt.title('Internet    Current', fontsize = 16)
     plt.show()
